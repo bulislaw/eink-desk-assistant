@@ -53,6 +53,8 @@ void setup()
     time_t epoch = time(NULL);
     Serial.print("Current time: ");
     Serial.println(asctime(gmtime(&epoch)));
+
+    epd.Init();
 }
 
 void loop()
@@ -73,7 +75,6 @@ void loop()
     Serial.print("SPX \% change : ");
     Serial.println(spx.changeSincePreviousClose);
 
-    epd.Init();
     epd.ClearFrame();
 
     fb.setRotation(3);
