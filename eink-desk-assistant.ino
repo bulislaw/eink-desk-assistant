@@ -111,5 +111,5 @@ void loop()
     epd.DisplayFrame(fb.getBuffer());
     epd.Sleep();
 
-    delay(2 * 60 * 1000); // 2 min * 60 sec * 1000 ms
+    delay(UPDATE_INTERVAL_MS);
 }

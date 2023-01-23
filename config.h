@@ -1,5 +1,8 @@
 #pragma once
 
+// Set how often to update the data and the screen
+#define UPDATE_INTERVAL_MS (2 * 60 * 1000) // 2min = 2 * 60 sec * 1000 ms -> Should be good for dev
+
 // Set time zone
 #define NTP_TZ (0) // UTC
 
