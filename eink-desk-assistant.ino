@@ -85,8 +85,8 @@ void loop()
     fb.drawRect(180, 100, 120, 100, BLACK);
     fb.drawRect(180, 200, 120, 100, BLACK);
     fb.drawRect(180, 300, 120, 100, BLACK);
-    fb.drawRect(0, 0, 180, 370, BLACK);
-    fb.drawRect(0, 370, 180, 30, BLACK);
+    fb.drawRect(0, 0, 180, 385, BLACK);
+    fb.drawRect(0, 385, 180, 15, BLACK);
 
     fb.setTextSize(2);
     fb.setCursor(200, 2);
@@ -98,12 +98,9 @@ void loop()
     fb.print("%");
     fb.println(spx.changeSincePreviousClose);
 
-    fb.setCursor(2, 372);
+    fb.setCursor(2, 389);
     fb.setTextSize(1);
-    fb.print("IP:");
-    fb.println(WiFi.localIP());
     time_t epoch = time(NULL);
-    fb.setCursor(2, 382);
     fb.println(asctime(localtime(&epoch)));
 
     //epd.SetPartialWindow(fb.getBuffer(), 0, 0, 100, 100);
