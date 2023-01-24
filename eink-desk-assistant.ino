@@ -61,8 +61,8 @@ void loop()
 {
     Serial.println("Getting SPX price from Yahoo Finance... ");
     Quote spx;
-    YahooFinQuote::YahooFinQuoteError err = yahoo.fetchQuote(SPX_SYMBOL, spx);
-    if (err != YahooFinQuote::OK) {
+    HTTPQuote::QuoteError err = yahoo.fetchQuote(SPX_SYMBOL, spx);
+    if (err != HTTPQuote::OK) {
         Serial.print("Failed to get SPX price; Error code: ");
         Serial.println(err);
         return;

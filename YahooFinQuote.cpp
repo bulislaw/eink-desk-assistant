@@ -3,14 +3,14 @@
 StaticJsonDocument<128> YahooFinQuote::_filter;
 StaticJsonDocument<256> YahooFinQuote::_json;
 
-YahooFinQuote::YahooFinQuote(SSLClient &client) : _http(client, _yahoo_fin_server, 443)
+YahooFinQuote::YahooFinQuote(SSLClient &client) : HTTPQuote(client, _server, _port)
 {
     // Set up JSON filter to only fetch relevant data
     _filter["quoteSummary"]["result"][0]["price"]["regularMarketPrice"]["raw"] = true;
     _filter["quoteSummary"]["result"][0]["price"]["regularMarketPreviousClose"]["raw"] = true;
 }
 
-YahooFinQuote::YahooFinQuoteError YahooFinQuote::fetchQuote(const char *symbol, Quote &quote)
+HTTPQuote::QuoteError YahooFinQuote::fetchQuote(const char *symbol, Quote &quote)
 {
     String path;
     path += _yahoo_fin_path;

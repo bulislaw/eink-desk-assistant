@@ -4,18 +4,13 @@
 #include <ArduinoHttpClient.h>
 #include <ArduinoJson.h>
 
-class Quote {
-  public:
-    float price;
-    float previousClose;
-    float changeSincePreviousClose;
-};
+#include "HTTPQuote.h"
 
-class YahooFinQuote {
+class YahooFinQuote: public HTTPQuote {
   private:
-    HttpClient _http;
+    static constexpr const char *_server = "query2.finance.yahoo.com";
+    static constexpr const uint16_t _port = 443;
 
-    static constexpr const char *_yahoo_fin_server = "query2.finance.yahoo.com";
     static constexpr const char *_yahoo_fin_path = "/v10/finance/quoteSummary/";
     static constexpr const char *_yahoo_fin_module = "?modules=price";
 
@@ -24,12 +19,6 @@ class YahooFinQuote {
     static StaticJsonDocument<256> _json; // Got 256 from the assistant https://arduinojson.org/v6/assistant/
 
   public:
-    typedef enum {
-        OK = 0,
-        HTTP_ERROR = -1,
-        JSON_ERROR = -2
-    } YahooFinQuoteError;
-
     YahooFinQuote(SSLClient &client);
-    YahooFinQuoteError fetchQuote(const char *symbol, Quote &quote);
+    QuoteError fetchQuote(const char *symbol, Quote &quote);
 };
