@@ -6,6 +6,7 @@
 #include "WiFi.h"
 
 #include "YahooFinQuote.h"
+#include "ForexQuote.h"
 
 #include "epd4in2.h"
 #include <Adafruit_GFX.h>
@@ -27,6 +28,7 @@ GFXcanvas1 fb(400, 300);
 WiFiClient wifi_client;
 SSLClient ssl_client(wifi_client, TAs, (size_t)TAs_NUM, A6);
 YahooFinQuote yahoo(ssl_client);
+ForexQuote forex(ssl_client);
 
 void setup()
 {
@@ -60,8 +62,8 @@ void setup()
 void loop()
 {
     Serial.println("Getting SPX price from Yahoo Finance... ");
-    Quote spx;
-    HTTPQuote::QuoteError err = yahoo.fetchQuote(SPX_SYMBOL, spx);
+    Quote quote;
+    HTTPQuote::QuoteError err = yahoo.fetchQuote(SPX_SYMBOL, quote);
     if (err != HTTPQuote::OK) {
         Serial.print("Failed to get SPX price; Error code: ");
         Serial.println(err);
@@ -69,11 +71,11 @@ void loop()
     }
 
     Serial.print("SPX price: ");
-    Serial.println(spx.price);
+    Serial.println(quote.price);
     Serial.print("SPX previous close price: ");
-    Serial.println(spx.previousClose);
+    Serial.println(quote.previousClose);
     Serial.print("SPX \% change : ");
-    Serial.println(spx.changeSincePreviousClose);
+    Serial.println(quote.changeSincePreviousClose);
 
     epd.ClearFrame();
 
@@ -89,14 +91,47 @@ void loop()
     fb.drawRect(0, 385, 180, 15, BLACK);
 
     fb.setTextSize(2);
+
     fb.setCursor(200, 2);
     fb.println("SPX:");
     fb.setCursor(190, 20);
     fb.print("$");
-    fb.println(spx.price);
+    fb.println(quote.price);
     fb.setCursor(190, 38);
     fb.print("%");
-    fb.println(spx.changeSincePreviousClose);
+    fb.println(quote.changeSincePreviousClose);
+
+    err = forex.fetchQuote("PLN", quote);
+    if (err != HTTPQuote::OK) {
+        Serial.print("Failed to get GBP/PLN price; Error code: ");
+        Serial.println(err);
+        return;
+    }
+
+    Serial.print("GBP/PLN exchange rate: ");
+    Serial.println(quote.price);
+
+    fb.setCursor(200, 102);
+    fb.println("GBP2PLN:");
+    fb.setCursor(190, 120);
+    fb.print(quote.price);
+    fb.println("zl");
+
+    err = forex.fetchQuote("USD", quote);
+    if (err != HTTPQuote::OK) {
+        Serial.print("Failed to get GBP/USD price; Error code: ");
+        Serial.println(err);
+        return;
+    }
+
+    Serial.print("GBP/USD exchange rate: ");
+    Serial.println(quote.price);
+
+    fb.setCursor(200, 162);
+    fb.println("GBP2USD:");
+    fb.setCursor(190, 180);
+    fb.print(quote.price);
+    fb.println("$");
 
     fb.setCursor(2, 389);
     fb.setTextSize(1);
