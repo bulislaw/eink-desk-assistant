@@ -1,3 +1,5 @@
+#include <vector>
+
 #include <SSLClient.h>
 #include <ArduinoHttpClient.h>
 #include <ArduinoJson.h>
@@ -7,6 +9,7 @@
 
 #include "YahooFinQuote.h"
 #include "ForexQuote.h"
+#include "Todoist.h"
 
 #include "epd4in2.h"
 #include <Adafruit_GFX.h>
@@ -29,6 +32,7 @@ WiFiClient wifi_client;
 SSLClient ssl_client(wifi_client, TAs, (size_t)TAs_NUM, A6);
 YahooFinQuote yahoo(ssl_client);
 ForexQuote forex(ssl_client);
+Todoist todoist(ssl_client);
 
 void setup()
 {
@@ -63,11 +67,13 @@ void loop()
 {
     Serial.println("Getting SPX price from Yahoo Finance... ");
     Quote quote;
-    HTTPQuote::QuoteError err = yahoo.fetchQuote(SPX_SYMBOL, quote);
-    if (err != HTTPQuote::OK) {
+    RestError err = yahoo.fetchQuote(SPX_SYMBOL, quote);
+    if (err != RestError::OK) {
         Serial.print("Failed to get SPX price; Error code: ");
         Serial.println(err);
-        return;
+        quote.price = 0;
+        quote.previousClose = 0;
+        quote.changeSincePreviousClose = 0;
     }
 
     Serial.print("SPX price: ");
@@ -102,10 +108,12 @@ void loop()
     fb.println(quote.changeSincePreviousClose);
 
     err = forex.fetchQuote("PLN", quote);
-    if (err != HTTPQuote::OK) {
+    if (err != RestError::OK) {
         Serial.print("Failed to get GBP/PLN price; Error code: ");
         Serial.println(err);
-        return;
+        quote.price = 0;
+        quote.previousClose = 0;
+        quote.changeSincePreviousClose = 0;
     }
 
     Serial.print("GBP/PLN exchange rate: ");
@@ -118,10 +126,12 @@ void loop()
     fb.println("zl");
 
     err = forex.fetchQuote("USD", quote);
-    if (err != HTTPQuote::OK) {
+    if (err != RestError::OK) {
         Serial.print("Failed to get GBP/USD price; Error code: ");
         Serial.println(err);
-        return;
+        quote.price = 0;
+        quote.previousClose = 0;
+        quote.changeSincePreviousClose = 0;
     }
 
     Serial.print("GBP/USD exchange rate: ");
@@ -138,6 +148,25 @@ void loop()
     time_t epoch = time(NULL);
     fb.println(asctime(localtime(&epoch)));
 
+    Serial.println("Getting tasks from Todoist... ");
+    std::vector<String> tasks;
+    err = todoist.getTasksWork(tasks);
+    if (err != RestError::OK)
+    {
+        Serial.print("Failed to get tasks; Error code: ");
+        Serial.println(err);
+        return;
+    }
+    Serial.print("Done! Got: ");
+    Serial.println(tasks.size());
+
+    fb.setCursor(5, 2);
+    fb.setTextSize(2);
+    fb.println("TODO Work:");
+    fb.setTextSize(1);
+    for (String task : tasks) {
+        fb.println(task);
+    }
     //epd.SetPartialWindow(fb.getBuffer(), 0, 0, 100, 100);
     //epd.DisplayFrame();
     epd.DisplayFrame(fb.getBuffer());

@@ -9,8 +9,7 @@ ForexQuote::ForexQuote(SSLClient &client) : HTTPQuote(client, _server, _port)
     // Set up JSON filter to only fetch relevant data
     _filter["result"] = true;
 }
-
-HTTPQuote::QuoteError ForexQuote::fetchQuote(const char *symbol, Quote &quote)
+RestError ForexQuote::fetchQuote(const char *symbol, Quote &quote)
 {
     String path;
     path += _forex_path;
@@ -25,19 +24,19 @@ HTTPQuote::QuoteError ForexQuote::fetchQuote(const char *symbol, Quote &quote)
     int statusCode = _http.responseStatusCode();
     if (statusCode != 200) {
         Serial.println("HTTP error: " + String(statusCode));
-        return HTTP_ERROR;
+        return RestError::HTTP_ERROR;
     }
     String response = _http.responseBody();
 
     _json.clear();
     DeserializationError error = deserializeJson(_json, response, DeserializationOption::Filter(_filter));
     if (error) {
-        return JSON_ERROR;
+        return RestError::JSON_ERROR;
     }
 
     quote.price = _json["result"].as<float>();
     quote.previousClose = 0.0;
     quote.changeSincePreviousClose = 0.0;
 
-    return OK;
+    return RestError::OK;
 }

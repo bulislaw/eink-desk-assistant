@@ -14,10 +14,10 @@ class ForexQuote: public HTTPQuote {
     static constexpr const char *_forex_path = "/exchangerates_data/convert?amount=1&from=GBP&to=";
 
     // Filter the response so we limit the size of temporary JSON document
-    static StaticJsonDocument<16> _filter; // Got 128 from the assistant https://arduinojson.org/v6/assistant/
-    static StaticJsonDocument<48> _json; // Got 256 from the assistant https://arduinojson.org/v6/assistant/
+    static StaticJsonDocument<16> _filter; // Got 16 from the assistant https://arduinojson.org/v6/assistant/
+    static StaticJsonDocument<48> _json; // Got 48 from the assistant https://arduinojson.org/v6/assistant/
 
   public:
     ForexQuote(SSLClient &client);
-    QuoteError fetchQuote(const char *symbol, Quote &quote);
+    RestError fetchQuote(const char *symbol, Quote &quote);
 };

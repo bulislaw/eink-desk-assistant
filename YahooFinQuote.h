@@ -20,5 +20,5 @@ class YahooFinQuote: public HTTPQuote {
 
   public:
     YahooFinQuote(SSLClient &client);
-    QuoteError fetchQuote(const char *symbol, Quote &quote);
+    RestError fetchQuote(const char *symbol, Quote &quote);
 };

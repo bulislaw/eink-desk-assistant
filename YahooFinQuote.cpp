@@ -10,7 +10,7 @@ YahooFinQuote::YahooFinQuote(SSLClient &client) : HTTPQuote(client, _server, _po
     _filter["quoteSummary"]["result"][0]["price"]["regularMarketPreviousClose"]["raw"] = true;
 }
 
-HTTPQuote::QuoteError YahooFinQuote::fetchQuote(const char *symbol, Quote &quote)
+RestError YahooFinQuote::fetchQuote(const char *symbol, Quote &quote)
 {
     String path;
     path += _yahoo_fin_path;
@@ -22,19 +22,19 @@ HTTPQuote::QuoteError YahooFinQuote::fetchQuote(const char *symbol, Quote &quote
     // read the status code and body of the response
     int statusCode = _http.responseStatusCode();
     if (statusCode != 200) {
-        return HTTP_ERROR;
+        return RestError::HTTP_ERROR;
     }
     String response = _http.responseBody();
 
     _json.clear();
     DeserializationError error = deserializeJson(_json, response, DeserializationOption::Filter(_filter));
     if (error) {
-        return JSON_ERROR;
+        return RestError::JSON_ERROR;
     }
 
     quote.price = _json["quoteSummary"]["result"][0]["price"]["regularMarketPrice"]["raw"].as<float>();
     quote.previousClose = _json["quoteSummary"]["result"][0]["price"]["regularMarketPreviousClose"]["raw"].as<float>();
     quote.changeSincePreviousClose = quote.price * 100.0 / quote.previousClose - 100;
 
-    return OK;
+    return RestError::OK;
 }
