@@ -170,7 +170,7 @@ void loop()
     //epd.SetPartialWindow(fb.getBuffer(), 0, 0, 100, 100);
     //epd.DisplayFrame();
     epd.DisplayFrame(fb.getBuffer());
-    epd.Sleep();
+    //epd.Sleep();
 
     delay(UPDATE_INTERVAL_MS);
 }
