@@ -9,6 +9,13 @@
 // Set wifi location
 #define AT_HOME
 
+// Location for weather service
+#if defined(AT_HOME)
+#define LOCATION "Cambridge,UK"
+#else
+#define LOCATION "Lodz,PL"
+#endif
+
 // Include secrets
 #include "secrets.h"
 

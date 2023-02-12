@@ -1,8 +1,8 @@
 #include "Todoist.h"
 #include "config.h"
 
-StaticJsonDocument<32> Todoist::_filter;
-StaticJsonDocument<512> Todoist::_json;
+StaticJsonDocument<128> Todoist::_filter;
+StaticJsonDocument<4*1024> Todoist::_json;
 
 Todoist::Todoist(SSLClient &client) : _http(client, _server, _port) {
     _filter[0]["content"] = true;
@@ -29,11 +29,15 @@ RestError Todoist::_getTasks(const char *path, std::vector<String> &tasks) {
     }
 
     _http.skipResponseHeaders();
-    DeserializationError error = deserializeJson(_json, _http, DeserializationOption::Filter(_filter));
+
+    String response = _http.responseBody();
+    DeserializationError error = deserializeJson(_json, response, DeserializationOption::Filter(_filter));
     if (error) {
         Serial.println("HTTP error: " + String(statusCode));
         return RestError::JSON_ERROR;
     }
+
+    _http.stop();
 
     for (JsonObject task : _json.as<JsonArray>()) {
         tasks.push_back(task["content"].as<String>());

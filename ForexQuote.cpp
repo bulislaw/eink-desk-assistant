@@ -34,6 +34,8 @@ RestError ForexQuote::fetchQuote(const char *symbol, Quote &quote)
         return RestError::JSON_ERROR;
     }
 
+    _http.stop();
+
     quote.price = _json["result"].as<float>();
     quote.previousClose = 0.0;
     quote.changeSincePreviousClose = 0.0;

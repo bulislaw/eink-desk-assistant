@@ -32,6 +32,8 @@ RestError YahooFinQuote::fetchQuote(const char *symbol, Quote &quote)
         return RestError::JSON_ERROR;
     }
 
+    _http.stop();
+
     quote.price = _json["quoteSummary"]["result"][0]["price"]["regularMarketPrice"]["raw"].as<float>();
     quote.previousClose = _json["quoteSummary"]["result"][0]["price"]["regularMarketPreviousClose"]["raw"].as<float>();
     quote.changeSincePreviousClose = quote.price * 100.0 / quote.previousClose - 100;

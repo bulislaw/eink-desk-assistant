@@ -18,8 +18,8 @@ class Todoist {
     HttpClient _http;
 
     // Filter the response so we limit the size of temporary JSON document
-    static StaticJsonDocument<32> _filter; // Got 32 from the assistant https://arduinojson.org/v6/assistant/
-    static StaticJsonDocument<512> _json; // Got 128 from the assistant https://arduinojson.org/v6/assistant/
+    static StaticJsonDocument<128> _filter; // Got 32 from the assistant https://arduinojson.org/v6/assistant/
+    static StaticJsonDocument<4*1024> _json; // Got 128 from the assistant https://arduinojson.org/v6/assistant/
 
     RestError _getTasks(const char *path, std::vector<String> &tasks);
 

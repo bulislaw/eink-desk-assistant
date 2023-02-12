@@ -10,6 +10,7 @@
 #include "YahooFinQuote.h"
 #include "ForexQuote.h"
 #include "Todoist.h"
+#include "Weather.h"
 
 #include "epd4in2.h"
 #include <Adafruit_GFX.h>
@@ -33,6 +34,7 @@ SSLClient ssl_client(wifi_client, TAs, (size_t)TAs_NUM, A6);
 YahooFinQuote yahoo(ssl_client);
 ForexQuote forex(ssl_client);
 Todoist todoist(ssl_client);
+// WeatherService weather(ssl_client);
 
 void setup()
 {
@@ -148,6 +150,26 @@ void loop()
     time_t epoch = time(NULL);
     fb.println(asctime(localtime(&epoch)));
 
+    // Serial.println("Get weather from OpenWeatherMap... ");
+    // Weather weather_data;
+    // err = weather.currentWeather(LOCATION, weather_data);
+    // if (err != RestError::OK)
+    // {
+    //     Serial.print("Failed to get weather; Error code: ");
+    //     Serial.println(err);
+    // } else {
+    //     Serial.println("Done!");
+    //     fb.setTextSize(1);
+    //     fb.setCursor(200, 205);
+    //     fb.println(LOCATION ":");
+    //     fb.setTextSize(2);
+    //     fb.setCursor(190, 215);
+    //     fb.print(weather_data.temp);
+    //     fb.print("C / ");
+    //     fb.print(weather_data.feels_like);
+    //     fb.println("C");
+    // }
+
     Serial.println("Getting tasks from Todoist... ");
     std::vector<String> tasks;
     err = todoist.getTasksWork(tasks);
@@ -167,6 +189,7 @@ void loop()
     for (String task : tasks) {
         fb.println(task);
     }
+
     //epd.SetPartialWindow(fb.getBuffer(), 0, 0, 100, 100);
     //epd.DisplayFrame();
     epd.DisplayFrame(fb.getBuffer());
